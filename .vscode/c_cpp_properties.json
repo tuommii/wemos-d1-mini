@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "/home/miikka/.arduino15/packages/esp8266/tools/**",
+                "/home/miikka/.arduino15/packages/esp8266/hardware/esp8266/2.7.4/**",
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+				"LED_BUILTIN"
+			],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "clang-x64",
+            "forcedInclude": []
+        }
+    ],
+    "version": 4,
+    "arduino.additionalUrls": [
+        "http://arduino.esp8266.com/stable/package_esp8266com_index.json",
+        "https://raw.githubusercontent.com/VSChina/azureiotdevkit_tools/master/package_azureboard_index.json"
+    ]
+}
