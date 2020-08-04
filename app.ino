@@ -1,86 +1,121 @@
-#include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
+#include <PubSubClient.h>
 
-const char		*ssid = "EDIT";
-const char		*pass = "EDIT";
+const char		*ssid = "";
+const char		*password = "";
+
+const char		*server = "";
+const char		*topic = "";
+const char		*user = "";
+const char		*pswd = "";
+int				port = 0;
+
+WiFiClient		wifi;
+PubSubClient	client(wifi);
+
 int				status = WL_IDLE_STATUS;
-int				code;
-unsigned int	counter = 0;
 int				ledState = LOW;
-unsigned long	prevMillis = 0;
-unsigned long	currMillis = 0;
+int				ledInterval = 1000;
+
+unsigned long	prev = 0;
+unsigned long	elapsed = 0;
+
 String			msg = String("MSG #");
+unsigned int	counter = 1;
 String			payload;
-String			response;
-HTTPClient		http;
+
+
+void blinkLed(int interval) {
+	elapsed = millis();
+	if (elapsed - prev < interval)
+		return ;
+	prev = elapsed;
+	if (ledState == LOW)
+		ledState = HIGH;
+	else
+		ledState = LOW;
+	digitalWrite(LED_BUILTIN, ledState);
+}
+
+void reconnect(int interval) {
+	while (!client.connected()) {
+		Serial.println("Making MQTT connection...");
+		if (client.connect("ESP8266Client", user, pswd))
+		{
+			Serial.println("Connected");
+			client.publish(topic, "Wemos D1 Mini Connected!", true);
+			client.subscribe("wemos/in");
+		}
+		else
+		{
+			Serial.println("Failed");
+			Serial.println(client.state());
+			Serial.println(WiFi.status());
+			delay(interval);
+		}
+	}
+}
+
+void on_receive_cb(char *topic, byte *payload, unsigned int length) {
+	Serial.print("Message arrived: [");
+	Serial.print(topic);
+	Serial.print("]");
+	Serial.println();
+
+	int i = -1;
+	while (++i < length)
+		Serial.print((char)payload[i]);
+	Serial.println();
+
+	int newLedInterval = String((char *)payload).toInt();
+	if (newLedInterval)
+		ledInterval = newLedInterval;
+}
 
 void setup()
 {
 	Serial.begin(115200);
 	while (!Serial)
-	{
 		;
-	}
 
 	if (WiFi.status() == WL_NO_SHIELD)
 	{
 		Serial.println("No WiFi shield!");
 		while (true)
-		{
 			;
-		}
 	}
 
 	WiFi.mode(WIFI_STA);
 	while (status != WL_CONNECTED)
 	{
 		Serial.println("Connecting...");
-		status = WiFi.begin(ssid, pass);
+		status = WiFi.begin(ssid, password);
 		delay(5000);
 	}
 
 	Serial.println("\nWifi connected!");
 	Serial.println(WiFi.localIP());
-	pinMode(LED_BUILTIN, OUTPUT);
-	digitalWrite(LED_BUILTIN, ledState);
-}
 
-void blinkLed(int interval) {
-	currMillis = millis();
-	if (currMillis - prevMillis < interval)
-		return ;
-	prevMillis = currMillis;
-	if (ledState == LOW)
-	{
-		ledState = HIGH;
-	}
-	else
-	{
-		ledState = LOW;
-	}
+	client.setServer(server, port);
+	client.setCallback(on_receive_cb);
+
+	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, ledState);
 }
 
 void loop()
 {
-	blinkLed(1000);
-	http.begin("http://192.168.1.105:8000/hello");
-	http.addHeader("Content-Type", "text/plain");
-	http.addHeader("Secret", "Jing Yang");
+	blinkLed(ledInterval);
 
-	counter++;
-	payload = msg + counter;
-	if (counter >= 1000)
-	{
-		counter = 0;
+	if (!client.connected()) {
+		reconnect(5000);
 	}
+	client.loop();
 
-	code = http.POST(payload);
-	response = http.getString();
-	http.end();
+	payload = msg + counter;
+	if (++counter >= 1000)
+		counter = 0;
 
-	Serial.println(code);
-	Serial.println(response);
-
-	delay(420);
+	client.publish("wemos/out", (char *)payload.c_str(), true);
+	delay(33);
 }

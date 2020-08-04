@@ -3,13 +3,14 @@
         {
             "name": "Linux",
             "includePath": [
+                "/home/miikka/Arduino/libraries/PubSubClient/src",
                 "/home/miikka/.arduino15/packages/esp8266/tools/**",
                 "/home/miikka/.arduino15/packages/esp8266/hardware/esp8266/2.7.4/**",
                 "${workspaceFolder}/**"
             ],
             "defines": [
-				"LED_BUILTIN"
-			],
+                "LED_BUILTIN"
+            ],
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c11",
             "cppStandard": "c++14",
