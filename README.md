@@ -15,6 +15,6 @@ Listen messages
 
 `mosquitto_sub -d -u USERNAME -P PASSWORD -t wemos/out`
 
-Change LED Blink rate (ms)
+Change LED blink rate (ms)
 
 `mosquitto_pub -d -u USERNAME -P PASSWORD -t wemos/in -m "100"`
