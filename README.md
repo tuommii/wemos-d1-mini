@@ -4,7 +4,7 @@
 
 <p align="center">
 	<br>
-	<img width=400 src="/wemos.png">
+	<img width=400 src="/wemos.jpeg">
 </p>
 
 > Playing with IoT
