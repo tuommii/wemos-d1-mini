@@ -9,6 +9,8 @@
 
 > Playing with IoT, MQTT and HTTP
 
+## Commands
+
 Listen messages
 
 `mosquitto_sub -d -u USERNAME -P PASSWORD -t wemos/out`
