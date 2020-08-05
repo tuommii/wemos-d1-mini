@@ -18,9 +18,5 @@
             "forcedInclude": []
         }
     ],
-    "version": 4,
-    "arduino.additionalUrls": [
-        "http://arduino.esp8266.com/stable/package_esp8266com_index.json",
-        "https://raw.githubusercontent.com/VSChina/azureiotdevkit_tools/master/package_azureboard_index.json"
-    ]
+    "version": 4
 }

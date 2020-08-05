@@ -1,5 +1,5 @@
 <h1 align="center">
-	IoT - (Learning)
+	Learning IoT
 </h1>
 
 <p align="center">

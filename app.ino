@@ -17,7 +17,7 @@ int				status = WL_IDLE_STATUS;
 int				ledState = LOW;
 int				ledInterval = 1000;
 
-unsigned long	prev = 0;
+unsigned long	prevTime = 0;
 unsigned long	elapsed = 0;
 
 String			msg = String("MSG #");
@@ -27,9 +27,9 @@ String			payload;
 
 void blinkLed(int interval) {
 	elapsed = millis();
-	if (elapsed - prev < interval)
+	if (elapsed - prevTime < interval)
 		return ;
-	prev = elapsed;
+	prevTime = elapsed;
 	if (ledState == LOW)
 		ledState = HIGH;
 	else
@@ -37,7 +37,7 @@ void blinkLed(int interval) {
 	digitalWrite(LED_BUILTIN, ledState);
 }
 
-void reconnect(int interval) {
+void reconnectMQTT(int interval) {
 	while (!client.connected()) {
 		Serial.println("Making MQTT connection...");
 		if (client.connect("ESP8266Client", user, pswd))
@@ -108,7 +108,7 @@ void loop()
 	blinkLed(ledInterval);
 
 	if (!client.connected()) {
-		reconnect(5000);
+		reconnectMQTT(5000);
 	}
 	client.loop();
 
